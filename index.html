@@ -1,0 +1,2432 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Solar Energy Monitoring System</title>
+
+<style>
+:root {
+  --green:#16805a;
+  --blue:#2873b9;
+  --yellow:#b98520;
+  --red:#c83e48;
+  --text:#20313c;
+  --muted:#617480;
+  --card:rgba(255,255,255,.94);
+  --border:rgba(190,207,215,.8);
+  --shadow:0 6px 25px rgba(0,0,0,.10);
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background-image:
+    linear-gradient(
+      rgba(239,247,249,.72),
+      rgba(239,247,249,.84)
+    ),
+    url("solar-panel.jpeg");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+
+body.dark {
+  --text:#eaf2f5;
+  --muted:#b8c8d0;
+  --card:rgba(22,36,45,.94);
+  --border:rgba(110,140,155,.4);
+  background-image:
+    linear-gradient(
+      rgba(8,18,27,.79),
+      rgba(8,18,27,.90)
+    ),
+    url("solar-panel.jpeg");
+}
+
+header, footer {
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+
+header { padding:20px; }
+
+.header-inner {
+  max-width:1180px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+}
+
+h1 {
+  margin:0;
+  color:var(--green);
+  font-size:26px;
+}
+
+.subtitle {
+  color:var(--muted);
+  font-size:13px;
+  margin-top:7px;
+}
+
+.badge {
+  display:inline-block;
+  margin-top:12px;
+  padding:7px 12px;
+  border-radius:20px;
+  background:#e6f2eb;
+  color:#176440;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.container {
+  max-width:1180px;
+  margin:auto;
+  padding:24px 18px;
+}
+
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:23px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+}
+
+.card h2 {
+  margin:0 0 20px;
+  font-size:19px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(175px,1fr));
+  gap:14px;
+}
+
+.metric {
+  padding:19px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:rgba(127,150,160,.04);
+  min-width:0;
+}
+
+.metric-title {
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:13px;
+}
+
+.metric-value {
+  font-size:26px;
+  font-weight:bold;
+  overflow-wrap:anywhere;
+}
+
+.metric-value.small {
+  font-size:16px;
+}
+
+.unit {
+  font-size:13px;
+  color:var(--muted);
+}
+
+.note {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+  margin-top:10px;
+}
+
+.buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:14px 0;
+}
+
+button {
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  background:var(--blue);
+  color:#fff;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover { filter:brightness(.92); }
+
+button:disabled {
+  opacity:.55;
+  cursor:wait;
+}
+
+.green { background:var(--green); }
+.yellow { background:var(--yellow); }
+.red { background:var(--red); }
+.gray { background:#697d89; }
+
+.banner {
+  padding:16px;
+  border-radius:9px;
+  margin-bottom:18px;
+  font-weight:bold;
+  background:#e3f3e9;
+  color:#176440;
+}
+
+.banner.warning {
+  background:#fff0c7;
+  color:#805900;
+}
+
+.banner.danger {
+  background:#ffe0e0;
+  color:#a12c30;
+}
+
+.banner.offline {
+  background:#e5ebef;
+  color:#435968;
+}
+
+.progress {
+  width:100%;
+  height:13px;
+  margin-top:18px;
+  background:var(--border);
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill {
+  width:0%;
+  height:100%;
+  background:var(--green);
+  transition:width .4s;
+}
+
+details {
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-top:13px;
+  padding:0 17px;
+}
+
+summary {
+  cursor:pointer;
+  font-weight:bold;
+  padding:17px 0;
+}
+
+.details-content {
+  padding-bottom:20px;
+}
+
+label {
+  display:block;
+  margin:15px 0 7px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+input[type=url],
+input[type=number],
+select {
+  width:100%;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:var(--card);
+  color:var(--text);
+}
+
+.checkbox-label {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:normal;
+  line-height:1.5;
+}
+
+.chart-grid {
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;
+}
+
+.chart-title {
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+canvas {
+  width:100%;
+  height:190px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:rgba(127,150,160,.04);
+}
+
+.log {
+  max-height:230px;
+  overflow-y:auto;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.log div {
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+
+footer {
+  text-align:center;
+  padding:25px;
+  font-size:12px;
+}
+
+@media(max-width:700px) {
+  h1 { font-size:21px; }
+  .container { padding:15px 12px; }
+  .card { padding:17px; }
+  body { background-attachment:scroll; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>Smart Solar Energy Monitoring System</h1>
+      <div class="subtitle">
+        ESP32 | Solar Monitoring | IoT Automation
+      </div>
+      <div class="badge" id="modeBadge">DEMO MODE</div>
+      <div class="note" id="clock"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="green" onclick="setMode('live')">
+        Live Mode
+      </button>
+      <button class="yellow" onclick="setMode('demo')">
+        Demo Mode
+      </button>
+      <button onclick="refreshDashboard()">
+        Refresh
+      </button>
+      <button class="gray" onclick="toggleTheme()">
+        Dark / Light
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- SYSTEM OVERVIEW -->
+<section class="card">
+  <h2>System Overview</h2>
+
+  <div class="banner offline" id="systemBanner">
+    DEMO MODE — Simulated Measurements
+  </div>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">ESP32 Connection</div>
+      <div class="metric-value small" id="espStatus">
+        DEMO
+      </div>
+      <div class="note" id="lastUpdate">
+        No live connection
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">System Health</div>
+      <div class="metric-value small" id="healthStatus">
+        SIMULATION
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">n8n Automation</div>
+      <div class="metric-value small" id="n8nStatus">
+        CONFIGURED — NOT VERIFIED
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Battery Voltage</div>
+      <div class="metric-value" id="batteryVoltage">
+        --
+      </div>
+      <div class="note" id="batteryStatus">
+        Not measured
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLAR MEASUREMENTS -->
+<section class="card">
+  <h2>Solar Measurements</h2>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">Solar Voltage</div>
+      <div class="metric-value">
+        <span id="voltage">--</span>
+        <span class="unit">V</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Solar Current</div>
+      <div class="metric-value">
+        <span id="current">--</span>
+        <span class="unit">mA</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Solar Power</div>
+      <div class="metric-value">
+        <span id="power">--</span>
+        <span class="unit">mW</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Panel Temperature</div>
+      <div class="metric-value">
+        <span id="temperature">--</span>
+        <span class="unit">°C</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Ambient Light</div>
+      <div class="metric-value">
+        <span id="light">--</span>
+        <span class="unit">lux</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Energy Today</div>
+      <div class="metric-value">
+        <span id="energy">0.000</span>
+        <span class="unit">Wh</span>
+      </div>
+      <div class="note">
+        Estimated from received live ESP32 measurements.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLAR PERFORMANCE -->
+<section class="card">
+  <h2>Solar Performance</h2>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">Panel Rated Power</div>
+      <div class="metric-value">
+        12 <span class="unit">W</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">
+        Rated-Power Utilisation
+      </div>
+      <div class="metric-value">
+        <span id="utilisation">--</span>
+        <span class="unit">%</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Peak Power Today</div>
+      <div class="metric-value">
+        <span id="peakPower">--</span>
+        <span class="unit">W</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Yesterday's Energy</div>
+      <div class="metric-value">
+        <span id="yesterdayEnergy">--</span>
+        <span class="unit">Wh</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-fill" id="utilisationBar"></div>
+  </div>
+
+  <div class="note" id="comparison">
+    Yesterday's data not yet available
+  </div>
+
+  <div class="note">
+    Rated-power utilisation compares measured power with
+    the 12 W panel rating. It is not solar-cell conversion
+    efficiency.
+  </div>
+</section>
+
+<!-- TEMPERATURE AND ALERTS -->
+<section class="card">
+  <h2>Temperature Protection & Alerts</h2>
+
+  <div class="note">
+    Normal: Below 40°C |
+    Warning: 40–49.9°C |
+    Danger: 50°C and above
+  </div>
+
+  <div class="banner offline" id="temperatureBanner">
+    Waiting for temperature readings
+  </div>
+
+  <div class="buttons">
+    <button class="yellow" onclick="testAlert('warning',45)">
+      Test Warning — 45°C
+    </button>
+
+    <button class="red" onclick="testAlert('danger',55)">
+      Test Danger — 55°C
+    </button>
+  </div>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">Last Webhook Request</div>
+      <div class="metric-value small" id="webhookStatus">
+        NOT TESTED
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Last Alert</div>
+      <div class="metric-value small" id="lastAlert">
+        NONE
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Requests Sent</div>
+      <div class="metric-value" id="alertCount">0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Notification Delivery</div>
+      <div class="metric-value small" id="deliveryStatus">
+        UNVERIFIED
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    Dashboard alerts are sent to your existing n8n workflow.
+    Check n8n Executions to confirm receipt. Email and ntfy
+    delivery must be checked separately. Manual tests are
+    labelled TEST.
+  </div>
+</section>
+
+<!-- AUTOMATIC MONITORING -->
+<section class="card">
+  <h2>Automatic Monitoring</h2>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">Monitoring Mode</div>
+      <div class="metric-value small" id="monitoringMode">
+        DEMO
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Automatic Alerts</div>
+      <div class="metric-value small" id="autoAlertStatus">
+        DISABLED
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Pending Alerts</div>
+      <div class="metric-value" id="queueCount">0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Last Data Source</div>
+      <div class="metric-value small" id="dataSource">
+        SIMULATED
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    Demo Mode uses simulated readings. Live Mode uses
+    ESP32 measurements. Browser-based automatic monitoring
+    runs only while this dashboard is open.
+  </div>
+</section>
+
+<!-- DAILY REPORT -->
+<section class="card">
+  <h2>Daily Energy Summary</h2>
+
+  <div class="grid">
+    <div class="metric">
+      <div class="metric-title">Total Energy</div>
+      <div class="metric-value">
+        <span id="dailyEnergy">0.000</span>
+        <span class="unit">Wh</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Maximum Temperature</div>
+      <div class="metric-value">
+        <span id="maximumTemperature">--</span>
+        <span class="unit">°C</span>
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Warning Events</div>
+      <div class="metric-value" id="warningCount">0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-title">Danger Events</div>
+      <div class="metric-value" id="dangerCount">0</div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="downloadReport()">
+      Download Daily Report
+    </button>
+
+    <button class="gray" onclick="downloadCSV()">
+      Export CSV
+    </button>
+  </div>
+
+  <div class="note">
+    Daily totals use real ESP32 readings only.
+    Demo Mode measurements are excluded.
+    Missing monitoring periods are not estimated.
+  </div>
+</section>
+
+<!-- DETAILS AND SETTINGS -->
+<section class="card">
+  <h2>Details & Settings</h2>
+
+  <details>
+    <summary>Live Sensor Graphs</summary>
+    <div class="details-content">
+      <div class="chart-grid">
+        <div>
+          <div class="chart-title">Temperature (°C)</div>
+          <canvas id="temperatureChart"
+                  width="500" height="190"></canvas>
+        </div>
+
+        <div>
+          <div class="chart-title">Power (mW)</div>
+          <canvas id="powerChart"
+                  width="500" height="190"></canvas>
+        </div>
+
+        <div>
+          <div class="chart-title">Voltage (V)</div>
+          <canvas id="voltageChart"
+                  width="500" height="190"></canvas>
+        </div>
+
+        <div>
+          <div class="chart-title">Current (mA)</div>
+          <canvas id="currentChart"
+                  width="500" height="190"></canvas>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>System Self-Test</summary>
+    <div class="details-content">
+      <div class="buttons">
+        <button onclick="runSelfTest()">
+          Run System Test
+        </button>
+      </div>
+
+      <div class="log" id="selfTestResults">
+        No test performed.
+      </div>
+
+      <div class="note">
+        Hardware sensors can only be verified when
+        the ESP32 provides diagnostic information.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Advanced Settings</summary>
+    <div class="details-content">
+
+      <label for="espURL">ESP32 Data URL</label>
+      <input type="url" id="espURL"
+        placeholder="http://192.168.1.50/data">
+
+      <label for="n8nURL">
+        n8n Production Webhook URL
+      </label>
+      <input type="url" id="n8nURL"
+        placeholder="http://localhost:5678/webhook/solar-alert">
+
+      <div class="note">
+        Use the production webhook URL and activate
+        your n8n workflow. The dashboard sends browser-
+        compatible requests. Delivery must be verified
+        in n8n Executions.
+      </div>
+
+      <label for="batteryThreshold">
+        Low Battery Threshold (V)
+      </label>
+      <input type="number" id="batteryThreshold"
+        min="0.1" step="0.1"
+        placeholder="Enter only after confirming battery type">
+
+      <div class="note">
+        Set this threshold according to the actual battery
+        chemistry and system design. Leave it blank if
+        battery voltage is not measured.
+      </div>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="automaticAlerts">
+        Enable automatic Live Mode alerts
+      </label>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="demoAlerts">
+        Enable automatic Demo Mode TEST alerts
+      </label>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="recoveryAlerts">
+        Enable temperature recovery notifications
+      </label>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="offlineAlerts">
+        Enable ESP32 offline notifications
+      </label>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="batteryAlerts">
+        Enable low-battery notifications
+      </label>
+
+      <div class="buttons">
+        <button class="green" onclick="saveSettings()">
+          Save Settings
+        </button>
+      </div>
+
+      <div class="note">
+        Automatic alerts are initially disabled to
+        prevent unexpected notifications during testing.
+        Avoid enabling duplicate alerts if your ESP32
+        firmware already sends notifications.
+      </div>
+
+    </div>
+  </details>
+
+  <details>
+    <summary>Demo Simulation Controls</summary>
+    <div class="details-content">
+
+      <label for="demoScenario">
+        Simulated Temperature Scenario
+      </label>
+
+      <select id="demoScenario"
+              onchange="changeDemoScenario()">
+        <option value="normal">
+          Normal — approximately 30°C
+        </option>
+        <option value="warning">
+          Warning — approximately 45°C
+        </option>
+        <option value="danger">
+          Danger — approximately 55°C
+        </option>
+        <option value="cycle">
+          Automatic demonstration cycle
+        </option>
+      </select>
+
+      <div class="buttons">
+        <button class="green"
+                onclick="setDemoScenario('normal')">
+          Normal
+        </button>
+
+        <button class="yellow"
+                onclick="setDemoScenario('warning')">
+          Warning
+        </button>
+
+        <button class="red"
+                onclick="setDemoScenario('danger')">
+          Danger
+        </button>
+      </div>
+
+      <div class="note">
+        These controls affect simulated readings only.
+        They do not control the physical ESP32 or
+        solar-panel hardware.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Sensor Diagnostics</summary>
+    <div class="details-content">
+      <div class="grid">
+        <div class="metric">
+          <div class="metric-title">INA219</div>
+          <div class="metric-value small" id="inaStatus">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">DS18B20</div>
+          <div class="metric-value small" id="dsStatus">
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">VEML7700</div>
+          <div class="metric-value small" id="vemlStatus">
+            UNKNOWN
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>System Event History</summary>
+    <div class="details-content">
+      <div class="log" id="eventLog"></div>
+
+      <div class="buttons">
+        <button class="gray" onclick="clearLogs()">
+          Clear Event History
+        </button>
+      </div>
+    </div>
+  </details>
+</section>
+
+</main>
+
+<footer>
+  Smart Solar Energy Monitoring System
+  <div class="note">
+    Electronics Engineering Project
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* ==========================================
+   CONFIGURATION
+========================================== */
+
+const PANEL_RATED_POWER_W = 12;
+const POLL_INTERVAL_MS = 2000;
+const MAX_HISTORY = 60;
+const ALERT_COOLDOWN_MS = 120000;
+const MAX_ALERT_ATTEMPTS = 3;
+
+const $ = id => document.getElementById(id);
+
+const defaults = {
+  espURL:"http://192.168.1.50/data",
+  n8nURL:"http://localhost:5678/webhook/solar-alert",
+  batteryThreshold:null,
+  automaticAlerts:false,
+  demoAlerts:false,
+  recoveryAlerts:false,
+  offlineAlerts:false,
+  batteryAlerts:false
+};
+
+/* ==========================================
+   STORAGE
+========================================== */
+
+function load(key,fallback) {
+  try {
+    const value=localStorage.getItem(key);
+    return value===null ? fallback : JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function save(key,value) {
+  try {
+    localStorage.setItem(key,JSON.stringify(value));
+  } catch(e) {
+    console.warn("Storage unavailable:",e);
+  }
+}
+
+function fmt(value,digits=2) {
+  return typeof value==="number" &&
+         Number.isFinite(value)
+    ?value.toFixed(digits)
+    :"--";
+}
+
+function localDay() {
+  const parts=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Pacific/Auckland",
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit"
+  }).formatToParts(new Date());
+
+  const part=type=>
+    parts.find(p=>p.type===type).value;
+
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+function clockUpdate() {
+  $("clock").textContent=
+    new Date().toLocaleString("en-NZ",{
+      timeZone:"Pacific/Auckland",
+      dateStyle:"medium",
+      timeStyle:"medium"
+    })+" NZ time";
+}
+
+/* ==========================================
+   APPLICATION STATE
+========================================== */
+
+let settings={
+  ...defaults,
+  ...load("solarSettings",{})
+};
+
+// Upgrade the old n8n test URL automatically.
+if(
+  !settings.n8nURL ||
+  settings.n8nURL===
+    "http://localhost:5678/webhook-test/solar-alert"
+) {
+  settings.n8nURL=defaults.n8nURL;
+}
+
+// Preserve existing settings, but do not use the
+// discontinued separate daily-report webhook.
+save("solarSettings",settings);
+
+let mode="demo";
+let online=false;
+let everConnected=false;
+let lastReceived=0;
+let polling=false;
+let modeVersion=0;
+let currentData=null;
+
+let previousTempState=null;
+let previousBatteryLow=false;
+let offlineAlertQueued=false;
+
+let demoScenario="normal";
+let demoStartTime=Date.now();
+let demoPreviousState=null;
+
+let requestCount=0;
+let sendingAlert=false;
+let alertQueue=[];
+let lastAlertByType={};
+
+let lastEnergyTime=0;
+let previousPowerW=null;
+
+let logs=load("solarLogs",[]);
+let csvRows=load("solarCSV",[]);
+
+let history={
+  temperature:[],
+  voltage:[],
+  current:[],
+  power:[]
+};
+
+function emptyDaily(date) {
+  return {
+    date,
+    energy:0,
+    peak:0,
+    maxTemp:null,
+    warnings:0,
+    dangers:0,
+    samples:0
+  };
+}
+
+let daily=load(
+  "solarDaily",
+  emptyDaily(localDay())
+);
+
+let yesterday=load("solarYesterday",null);
+
+/* ==========================================
+   EVENT LOG
+========================================== */
+
+function addLog(message) {
+  const time=new Date().toLocaleTimeString();
+
+  logs.unshift(time+" — "+message);
+  logs=logs.slice(0,60);
+
+  save("solarLogs",logs);
+  renderLogs();
+}
+
+function renderLogs() {
+  const box=$("eventLog");
+  box.replaceChildren();
+
+  logs.forEach(message=>{
+    const div=document.createElement("div");
+    div.textContent=message;
+    box.appendChild(div);
+  });
+}
+
+function clearLogs() {
+  logs=[];
+  save("solarLogs",logs);
+  renderLogs();
+}
+
+/* ==========================================
+   SETTINGS
+========================================== */
+
+function displaySettings() {
+  $("espURL").value=settings.espURL||"";
+  $("n8nURL").value=settings.n8nURL||"";
+
+  $("batteryThreshold").value=
+    settings.batteryThreshold??"";
+
+  [
+    "automaticAlerts",
+    "demoAlerts",
+    "recoveryAlerts",
+    "offlineAlerts",
+    "batteryAlerts"
+  ].forEach(id=>{
+    $(id).checked=!!settings[id];
+  });
+
+  updateN8nStatus();
+  updateAutomaticStatus();
+}
+
+function saveSettings() {
+  const thresholdText=
+    $("batteryThreshold").value.trim();
+
+  const threshold=thresholdText===""
+    ?null
+    :Number(thresholdText);
+
+  if(
+    threshold!==null &&
+    (!Number.isFinite(threshold)||threshold<=0)
+  ) {
+    alert("Enter a valid battery threshold.");
+    return;
+  }
+
+  const espURL=$("espURL").value.trim();
+  const n8nURL=$("n8nURL").value.trim();
+
+  for(const value of [espURL,n8nURL]) {
+    if(!value) continue;
+
+    try {
+      const url=new URL(value);
+      if(!["http:","https:"].includes(url.protocol)) {
+        throw Error("Invalid protocol");
+      }
+    } catch {
+      alert("Please enter a valid HTTP or HTTPS URL.");
+      return;
+    }
+  }
+
+  settings.espURL=espURL;
+  settings.n8nURL=n8nURL;
+  settings.batteryThreshold=threshold;
+
+  [
+    "automaticAlerts",
+    "demoAlerts",
+    "recoveryAlerts",
+    "offlineAlerts",
+    "batteryAlerts"
+  ].forEach(id=>{
+    settings[id]=$(id).checked;
+  });
+
+  alertQueue=[];
+  updateQueueCount();
+
+  save("solarSettings",settings);
+
+  updateN8nStatus();
+  updateAutomaticStatus();
+
+  addLog("Dashboard settings saved");
+  alert("Settings saved successfully.");
+}
+
+function updateN8nStatus() {
+  $("n8nStatus").textContent=settings.n8nURL
+    ?"CONFIGURED — NOT VERIFIED"
+    :"NOT CONFIGURED";
+}
+
+function updateAutomaticStatus() {
+  const enabled=mode==="live"
+    ?settings.automaticAlerts
+    :settings.demoAlerts;
+
+  $("autoAlertStatus").textContent=
+    enabled?"ENABLED":"DISABLED";
+
+  $("monitoringMode").textContent=
+    mode.toUpperCase();
+
+  $("dataSource").textContent=
+    mode==="live"?"ESP32":"SIMULATED";
+}
+
+/* ==========================================
+   THEME AND MODE
+========================================== */
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+
+  save(
+    "solarTheme",
+    document.body.classList.contains("dark")
+      ?"dark":"light"
+  );
+}
+
+function setBanner(id,message,type="normal") {
+  const el=$(id);
+  el.textContent=message;
+  el.className=
+    "banner"+(type==="normal"?"":" "+type);
+}
+
+function setMode(next) {
+  if(!["demo","live"].includes(next)) return;
+  if(next===mode) return;
+
+  mode=next;
+  modeVersion++;
+
+  online=false;
+  lastReceived=0;
+  currentData=null;
+
+  previousTempState=null;
+  previousBatteryLow=false;
+  demoPreviousState=null;
+  offlineAlertQueued=false;
+
+  lastEnergyTime=0;
+  previousPowerW=null;
+
+  alertQueue=[];
+  updateQueueCount();
+
+  history={
+    temperature:[],
+    voltage:[],
+    current:[],
+    power:[]
+  };
+
+  clearMeasurements();
+
+  $("modeBadge").textContent=
+    next==="live"?"LIVE MODE":"DEMO MODE";
+
+  $("espStatus").textContent=
+    next==="live"?"CONNECTING":"DEMO";
+
+  $("healthStatus").textContent=
+    next==="live"?"CONNECTING":"SIMULATION";
+
+  $("lastUpdate").textContent=
+    next==="live"
+      ?"Waiting for ESP32 data"
+      :"Simulated measurements";
+
+  setBanner(
+    "systemBanner",
+    next==="live"
+      ?"Connecting to ESP32..."
+      :"DEMO MODE — Simulated Measurements",
+    "offline"
+  );
+
+  updateAutomaticStatus();
+  addLog("Mode changed to "+next.toUpperCase());
+
+  // If a previous fetch is still finishing,
+  // the regular polling timer will update the mode.
+  pollESP32();
+}
+
+/* ==========================================
+   DAILY ENERGY CALCULATION
+========================================== */
+
+function checkNewDay() {
+  const today=localDay();
+
+  if(daily.date===today) return;
+
+  yesterday={...daily};
+  save("solarYesterday",yesterday);
+
+  daily=emptyDaily(today);
+  csvRows=[];
+
+  lastEnergyTime=0;
+  previousPowerW=null;
+
+  save("solarDaily",daily);
+  save("solarCSV",csvRows);
+
+  addLog("New monitoring day started");
+  updateDailyDisplay();
+}
+
+function updateDailyData(data) {
+  checkNewDay();
+
+  const now=Date.now();
+  const powerW=Math.max(0,data.power/1000);
+
+  if(
+    lastEnergyTime &&
+    previousPowerW!==null
+  ) {
+    const elapsed=now-lastEnergyTime;
+
+    // Do not estimate energy over long gaps.
+    if(elapsed>0&&elapsed<=15000) {
+      daily.energy+=
+        ((previousPowerW+powerW)/2)*
+        (elapsed/3600000);
+    }
+  }
+
+  lastEnergyTime=now;
+  previousPowerW=powerW;
+
+  daily.peak=Math.max(daily.peak,powerW);
+
+  daily.maxTemp=daily.maxTemp===null
+    ?data.temperature
+    :Math.max(daily.maxTemp,data.temperature);
+
+  daily.samples++;
+
+  csvRows.push([
+    new Date().toISOString(),
+    data.voltage,
+    data.current,
+    data.power,
+    data.temperature,
+    data.light,
+    data.battery??""
+  ]);
+
+  // Limit browser storage use.
+  if(csvRows.length>1500) {
+    csvRows.shift();
+  }
+
+  save("solarDaily",daily);
+  save("solarCSV",csvRows);
+
+  updateDailyDisplay();
+}
+
+function updateDailyDisplay() {
+  $("energy").textContent=fmt(daily.energy,3);
+  $("dailyEnergy").textContent=fmt(daily.energy,3);
+
+  $("peakPower").textContent=
+    daily.samples?fmt(daily.peak,2):"--";
+
+  $("maximumTemperature").textContent=
+    fmt(daily.maxTemp,1);
+
+  $("warningCount").textContent=daily.warnings;
+  $("dangerCount").textContent=daily.dangers;
+
+  $("yesterdayEnergy").textContent=
+    yesterday?fmt(yesterday.energy,3):"--";
+
+  $("comparison").textContent=yesterday
+    ?"Today vs yesterday: "+
+      fmt(daily.energy-yesterday.energy,3)+
+      " Wh (partial-day comparison)"
+    :"Yesterday's data not yet available";
+}
+
+/* ==========================================
+   TEMPERATURE STATUS
+========================================== */
+
+function tempState(temperature) {
+  if(temperature>=50) return "danger";
+  if(temperature>=40) return "warning";
+  return "normal";
+}
+
+function updateTemperature(data,demo) {
+  const state=tempState(data.temperature);
+
+  setBanner(
+    "temperatureBanner",
+    state.toUpperCase()+" — "+
+      fmt(data.temperature,1)+"°C"+
+      (demo?" (Simulated)":""),
+    state
+  );
+
+  $("healthStatus").textContent=
+    demo?"SIMULATION":state.toUpperCase();
+
+  setBanner(
+    "systemBanner",
+    demo
+      ?"DEMO MODE — Simulated Measurements"
+      :"SYSTEM "+state.toUpperCase(),
+    demo?"offline":state
+  );
+
+  return state;
+}
+
+/* ==========================================
+   SENSOR DATA VALIDATION
+========================================== */
+
+function normalizeData(raw) {
+  if(!raw||typeof raw!=="object") {
+    throw Error("Invalid ESP32 JSON data");
+  }
+
+  const values={
+    temperature:
+      raw.temperature??raw.temperature_c,
+    voltage:
+      raw.voltage??raw.solar_voltage,
+    current:
+      raw.current_mA??
+      raw.solar_current_mA??
+      raw.current,
+    light:
+      raw.light_lux??raw.lux??raw.light
+  };
+
+  for(const [key,value] of Object.entries(values)) {
+    if(value===null||value===undefined||value==="") {
+      throw Error("Missing "+key+" reading");
+    }
+
+    values[key]=Number(value);
+
+    if(!Number.isFinite(values[key])) {
+      throw Error("Invalid "+key+" reading");
+    }
+  }
+
+  if(
+    values.temperature< -55 ||
+    values.temperature>125 ||
+    values.temperature===-127 ||
+    raw.ds18b20_ok===false
+  ) {
+    throw Error("Temperature sensor fault");
+  }
+
+  if(
+    raw.ina219_ok===false ||
+    raw.veml7700_ok===false
+  ) {
+    throw Error("Sensor fault reported");
+  }
+
+  const suppliedPower=
+    raw.power_mW??
+    raw.solar_power_mW??
+    raw.power;
+
+  const power=suppliedPower==null
+    ?values.voltage*values.current
+    :Number(suppliedPower);
+
+  if(!Number.isFinite(power)) {
+    throw Error("Invalid power reading");
+  }
+
+  const batteryRaw=
+    raw.battery_voltage??raw.batteryVoltage;
+
+  const battery=
+    batteryRaw===null ||
+    batteryRaw===undefined ||
+    batteryRaw===""
+      ?null
+      :Number(batteryRaw);
+
+  return {
+    ...values,
+    power,
+    battery:Number.isFinite(battery)
+      ?battery:null
+  };
+}
+
+async function readESP32() {
+  if(!settings.espURL) {
+    throw Error("ESP32 URL not configured");
+  }
+
+  const controller=new AbortController();
+
+  const timeout=setTimeout(
+    ()=>controller.abort(),
+    4000
+  );
+
+  try {
+    const response=await fetch(settings.espURL,{
+      cache:"no-store",
+      signal:controller.signal
+    });
+
+    if(!response.ok) {
+      throw Error("HTTP "+response.status);
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/* ==========================================
+   MEASUREMENT DISPLAY
+========================================== */
+
+function clearMeasurements() {
+  [
+    "voltage",
+    "current",
+    "power",
+    "temperature",
+    "light",
+    "batteryVoltage",
+    "utilisation"
+  ].forEach(id=>{
+    $(id).textContent="--";
+  });
+
+  $("batteryStatus").textContent="Not available";
+  $("utilisationBar").style.width="0%";
+
+  setBanner(
+    "temperatureBanner",
+    "Waiting for valid temperature readings",
+    "offline"
+  );
+}
+
+function updateMeasurements(data,demo=false) {
+  $("voltage").textContent=fmt(data.voltage,2);
+  $("current").textContent=fmt(data.current,1);
+  $("power").textContent=fmt(data.power,1);
+  $("temperature").textContent=
+    fmt(data.temperature,1);
+  $("light").textContent=fmt(data.light,0);
+
+  $("batteryVoltage").textContent=
+    data.battery===null
+      ?" -- "
+      :fmt(data.battery,2)+" V";
+
+  const batteryLow=
+    data.battery!==null &&
+    settings.batteryThreshold!==null &&
+    data.battery<settings.batteryThreshold;
+
+  $("batteryStatus").textContent=
+    data.battery===null
+      ?"Not measured"
+      :batteryLow
+        ?"LOW BATTERY"
+        :"Voltage measured";
+
+  const utilisation=
+    (data.power/1000)/PANEL_RATED_POWER_W*100;
+
+  $("utilisation").textContent=
+    fmt(utilisation,1);
+
+  $("utilisationBar").style.width=
+    Math.max(0,Math.min(100,utilisation))+"%";
+
+  const state=updateTemperature(data,demo);
+
+  if(!demo&&batteryLow&&state==="normal") {
+    $("healthStatus").textContent="LOW BATTERY";
+
+    setBanner(
+      "systemBanner",
+      "LOW BATTERY — Check battery voltage",
+      "warning"
+    );
+  }
+
+  updateGraphs(data);
+
+  if(demo) {
+    processDemoAlerts(data,state);
+  } else {
+    updateDailyData(data);
+    processLiveAlerts(data,state);
+  }
+}
+
+function updateDiagnostics(raw) {
+  const status=value=>
+    value===true?"WORKING":
+    value===false?"FAULT":
+    "NOT REPORTED";
+
+  $("inaStatus").textContent=
+    status(raw.ina219_ok);
+
+  $("dsStatus").textContent=
+    status(raw.ds18b20_ok);
+
+  $("vemlStatus").textContent=
+    status(raw.veml7700_ok);
+}
+
+/* ==========================================
+   SENSOR GRAPHS
+========================================== */
+
+function drawGraph(id,values,color) {
+  const canvas=$(id);
+  const ctx=canvas.getContext("2d");
+
+  const w=canvas.width;
+  const h=canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  if(values.length<2) return;
+
+  const min=Math.min(...values);
+  const max=Math.max(...values);
+  const range=Math.max(max-min,1);
+
+  ctx.beginPath();
+  ctx.strokeStyle=color;
+  ctx.lineWidth=2;
+
+  values.forEach((value,i)=>{
+    const x=20+i*(w-40)/(values.length-1);
+    const y=h-20-(value-min)/range*(h-40);
+
+    if(i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+
+  ctx.stroke();
+
+  ctx.fillStyle=color;
+  ctx.font="12px Arial";
+
+  ctx.fillText(
+    "Min: "+fmt(min,1)+
+    "   Max: "+fmt(max,1),
+    20,15
+  );
+}
+
+function updateGraphs(data) {
+  for(const key of Object.keys(history)) {
+    history[key].push(data[key]);
+
+    if(history[key].length>MAX_HISTORY) {
+      history[key].shift();
+    }
+  }
+
+  drawGraph(
+    "temperatureChart",
+    history.temperature,
+    "#d54c50"
+  );
+
+  drawGraph(
+    "powerChart",
+    history.power,
+    "#16805a"
+  );
+
+  drawGraph(
+    "voltageChart",
+    history.voltage,
+    "#2873b9"
+  );
+
+  drawGraph(
+    "currentChart",
+    history.current,
+    "#d29b25"
+  );
+}
+
+/* ==========================================
+   N8N WEBHOOK COMMUNICATION
+========================================== */
+
+/*
+  This dashboard uses the existing production URL.
+
+  Browser-compatible form POST:
+    - Works without reading a CORS response.
+    - n8n receives values under $json.body.
+    - Browser cannot confirm successful processing.
+    - Check n8n Executions for verification.
+
+  Alert types match the existing n8n Switch:
+    warning / danger
+    low_battery
+    offline
+    recovery
+*/
+
+function buildAlertPayload(
+  severity,
+  temperature,
+  eventType,
+  isDemo=false,
+  snapshot=null
+) {
+  const data=snapshot;
+
+  return {
+    source:"solar_dashboard",
+    project:"Smart Solar Energy Monitoring",
+    timestamp:new Date().toISOString(),
+
+    mode:isDemo?"demo":"live",
+    simulated:isDemo,
+    test:isDemo,
+
+    severity:severity,
+    status:severity.toUpperCase(),
+    event_type:eventType,
+
+    temperature:temperature??null,
+
+    voltage:isDemo?null:data?.voltage??null,
+    current:isDemo?null:data?.current??null,
+    power:isDemo?null:data?.power??null,
+    light:isDemo?null:data?.light??null,
+
+    battery_voltage:
+      isDemo?null:data?.battery??null,
+
+    battery_threshold:
+      settings.batteryThreshold,
+
+    message:
+      (isDemo?"TEST — ":"")+
+      severity.toUpperCase()+
+      " — Solar monitoring notification"
+  };
+}
+
+async function postToN8n(payload) {
+  if(!settings.n8nURL) {
+    throw Error("n8n webhook URL missing");
+  }
+
+  const form=new URLSearchParams();
+
+  for(const [key,value] of Object.entries(payload)) {
+    if(value===null||value===undefined) {
+      form.append(key,"");
+    } else if(typeof value==="object") {
+      form.append(key,JSON.stringify(value));
+    } else {
+      form.append(key,String(value));
+    }
+  }
+
+  const controller=new AbortController();
+
+  const timeout=setTimeout(
+    ()=>controller.abort(),
+    8000
+  );
+
+  try {
+    await fetch(settings.n8nURL,{
+      method:"POST",
+      mode:"no-cors",
+      body:form,
+      signal:controller.signal
+    });
+
+    return {
+      sent:true,
+      verified:false
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function sendAlert(payload) {
+  $("webhookStatus").textContent="SENDING";
+
+  try {
+    const result=await postToN8n(payload);
+
+    requestCount++;
+    $("alertCount").textContent=requestCount;
+
+    $("lastAlert").textContent=
+      payload.severity.toUpperCase()+
+      (payload.test?" (TEST)":"");
+
+    $("webhookStatus").textContent=
+      "SENT — UNVERIFIED";
+
+    $("n8nStatus").textContent=
+      "REQUEST SENT";
+
+    $("deliveryStatus").textContent=
+      "UNVERIFIED";
+
+    addLog(
+      "n8n "+payload.severity+
+      (payload.test?" TEST":"")+
+      " request sent; receipt unverified"
+    );
+
+    return result;
+  } catch(e) {
+    $("webhookStatus").textContent="FAILED";
+    $("n8nStatus").textContent="REQUEST FAILED";
+
+    addLog("n8n request failed: "+e.message);
+    throw e;
+  }
+}
+
+/* ==========================================
+   MANUAL TEMPERATURE TESTS
+========================================== */
+
+async function testAlert(severity,temperature) {
+  const payload=buildAlertPayload(
+    severity,
+    temperature,
+    "manual_"+severity+"_test",
+    true,
+    null
+  );
+
+  try {
+    await sendAlert(payload);
+
+    alert(
+      "TEST request sent.\n\n"+
+      "Check n8n Executions to confirm it arrived.\n"+
+      "Then check the email or ntfy notification.\n\n"+
+      "The browser cannot verify delivery."
+    );
+  } catch(e) {
+    alert(
+      "TEST request failed: "+e.message+
+      "\n\nCheck that n8n is running and the "+
+      "production workflow is active."
+    );
+  }
+}
+
+/* ==========================================
+   AUTOMATIC ALERT QUEUE
+========================================== */
+
+function updateQueueCount() {
+  $("queueCount").textContent=alertQueue.length;
+}
+
+function queueAlert(
+  severity,
+  temperature,
+  eventType,
+  isDemo=false,
+  snapshot=null
+) {
+  if(!settings.n8nURL) return;
+
+  if(isDemo&&!settings.demoAlerts) return;
+  if(!isDemo&&!settings.automaticAlerts) return;
+
+  const key=
+    (isDemo?"demo:":"live:")+eventType;
+
+  const now=Date.now();
+  const last=lastAlertByType[key]||0;
+
+  if(now-last<ALERT_COOLDOWN_MS) return;
+
+  if(alertQueue.some(item=>item.key===key)) {
+    return;
+  }
+
+  const payload=buildAlertPayload(
+    severity,
+    temperature,
+    eventType,
+    isDemo,
+    snapshot
+  );
+
+  lastAlertByType[key]=now;
+
+  alertQueue.push({
+    key,
+    payload,
+    isDemo,
+    attempts:0,
+    nextAttempt:0
+  });
+
+  if(alertQueue.length>20) {
+    alertQueue.shift();
+  }
+
+  updateQueueCount();
+  processAlertQueue();
+}
+
+async function processAlertQueue() {
+  if(sendingAlert||!alertQueue.length) return;
+
+  const item=alertQueue[0];
+
+  if(Date.now()<item.nextAttempt) return;
+
+  const enabled=item.isDemo
+    ?settings.demoAlerts
+    :settings.automaticAlerts;
+
+  if(!enabled) {
+    alertQueue.shift();
+    updateQueueCount();
+    return;
+  }
+
+  sendingAlert=true;
+
+  try {
+    await sendAlert(item.payload);
+    alertQueue.shift();
+  } catch(e) {
+    item.attempts++;
+
+    if(item.attempts>=MAX_ALERT_ATTEMPTS) {
+      alertQueue.shift();
+      addLog("Alert abandoned after repeated failures");
+    } else {
+      item.nextAttempt=
+        Date.now()+30000*item.attempts;
+
+      addLog("Alert retry scheduled");
+    }
+  } finally {
+    sendingAlert=false;
+    updateQueueCount();
+  }
+}
+
+/* ==========================================
+   LIVE AUTOMATIC ALERTS
+========================================== */
+
+function processLiveAlerts(data,state) {
+  if(state!==previousTempState) {
+
+    if(state==="warning") {
+      daily.warnings++;
+      addLog("LIVE temperature WARNING");
+
+      queueAlert(
+        "warning",
+        data.temperature,
+        "temperature_warning",
+        false,
+        data
+      );
+    }
+
+    if(state==="danger") {
+      daily.dangers++;
+      addLog("LIVE temperature DANGER");
+
+      queueAlert(
+        "danger",
+        data.temperature,
+        "temperature_danger",
+        false,
+        data
+      );
+    }
+
+    if(
+      state==="normal" &&
+      previousTempState!==null &&
+      previousTempState!=="normal"
+    ) {
+      addLog("Temperature returned to NORMAL");
+
+      if(settings.recoveryAlerts) {
+        queueAlert(
+          "recovery",
+          data.temperature,
+          "temperature_recovery",
+          false,
+          data
+        );
+      }
+    }
+
+    previousTempState=state;
+
+    save("solarDaily",daily);
+    updateDailyDisplay();
+  }
+
+  if(
+    settings.batteryThreshold!==null &&
+    data.battery!==null
+  ) {
+    const low=
+      data.battery<settings.batteryThreshold;
+
+    if(low&&!previousBatteryLow) {
+      addLog("Low battery voltage detected");
+
+      if(settings.batteryAlerts) {
+        queueAlert(
+          "low_battery",
+          data.temperature,
+          "low_battery",
+          false,
+          data
+        );
+      }
+    }
+
+    previousBatteryLow=low;
+  } else {
+    previousBatteryLow=false;
+  }
+}
+
+/* ==========================================
+   DEMO SIMULATION
+========================================== */
+
+function changeDemoScenario() {
+  demoScenario=$("demoScenario").value;
+  demoStartTime=Date.now();
+
+  addLog("Demo scenario: "+demoScenario);
+
+  if(mode==="demo") {
+    // The next polling cycle updates the display.
+    generateAndDisplayDemo();
+  }
+}
+
+function setDemoScenario(scenario) {
+  $("demoScenario").value=scenario;
+  changeDemoScenario();
+}
+
+function getDemoTemperature() {
+  let selected=demoScenario;
+
+  if(demoScenario==="cycle") {
+    const elapsed=Date.now()-demoStartTime;
+    const stage=Math.floor(elapsed/15000)%3;
+
+    selected=[
+      "normal",
+      "warning",
+      "danger"
+    ][stage];
+  }
+
+  if(selected==="warning") {
+    return 44+Math.random()*2;
+  }
+
+  if(selected==="danger") {
+    return 54+Math.random()*2;
+  }
+
+  return 28+Math.random()*7;
+}
+
+function generateDemoData() {
+  const voltage=4.5+Math.random()*.8;
+  const current=200+Math.random()*150;
+
+  return {
+    voltage,
+    current,
+    power:voltage*current,
+    temperature:getDemoTemperature(),
+    light:500+Math.random()*450,
+    battery:null
+  };
+}
+
+function processDemoAlerts(data,state) {
+  if(state===demoPreviousState) return;
+
+  const previous=demoPreviousState;
+  demoPreviousState=state;
+
+  addLog(
+    "DEMO simulated temperature "+
+    state.toUpperCase()
+  );
+
+  if(state==="warning"||state==="danger") {
+    queueAlert(
+      state,
+      data.temperature,
+      "demo_temperature_"+state,
+      true,
+      null
+    );
+  }
+
+  if(
+    state==="normal" &&
+    previous!==null &&
+    previous!=="normal" &&
+    settings.recoveryAlerts
+  ) {
+    queueAlert(
+      "recovery",
+      data.temperature,
+      "temperature_recovery",
+      true,
+      null
+    );
+  }
+}
+
+function generateAndDisplayDemo() {
+  if(mode!=="demo") return;
+
+  const data=generateDemoData();
+
+  $("espStatus").textContent="DEMO";
+  $("lastUpdate").textContent=
+    "Simulated "+new Date().toLocaleTimeString();
+
+  updateMeasurements(data,true);
+}
+
+/* ==========================================
+   CONNECTION STATUS
+========================================== */
+
+function markOffline(reason) {
+  const wasOnline=online;
+
+  online=false;
+  currentData=null;
+
+  lastEnergyTime=0;
+  previousPowerW=null;
+
+  $("espStatus").textContent="OFFLINE";
+  $("healthStatus").textContent="OFFLINE";
+
+  setBanner(
+    "systemBanner",
+    "ESP32 OFFLINE — No sensor data",
+    "offline"
+  );
+
+  clearMeasurements();
+
+  if(wasOnline) {
+    addLog("ESP32 disconnected: "+reason);
+  }
+
+  // Avoid an offline alert before the ESP32
+  // has ever successfully connected.
+  if(
+    everConnected &&
+    !offlineAlertQueued &&
+    settings.offlineAlerts
+  ) {
+    offlineAlertQueued=true;
+
+    queueAlert(
+      "offline",
+      null,
+      "esp32_offline",
+      false,
+      null
+    );
+  }
+}
+
+/* ==========================================
+   ESP32 POLLING
+========================================== */
+
+async function pollESP32() {
+  if(polling) return;
+
+  polling=true;
+
+  const requestedMode=mode;
+  const requestedVersion=modeVersion;
+
+  try {
+    checkNewDay();
+
+    if(requestedMode==="demo") {
+      generateAndDisplayDemo();
+      return;
+    }
+
+    try {
+      const raw=await readESP32();
+
+      if(
+        mode!==requestedMode ||
+        modeVersion!==requestedVersion
+      ) return;
+
+      const data=normalizeData(raw);
+      const wasOffline=!online;
+
+      online=true;
+      everConnected=true;
+      offlineAlertQueued=false;
+
+      lastReceived=Date.now();
+      currentData=data;
+
+      $("espStatus").textContent="ONLINE";
+      $("lastUpdate").textContent=
+        "Updated "+new Date().toLocaleTimeString();
+
+      updateDiagnostics(raw);
+      updateMeasurements(data,false);
+
+      if(wasOffline) {
+        addLog("ESP32 connected successfully");
+      }
+    } catch(e) {
+      if(
+        mode!==requestedMode ||
+        modeVersion!==requestedVersion
+      ) return;
+
+      const elapsed=lastReceived
+        ?Date.now()-lastReceived
+        :Infinity;
+
+      if(elapsed>=10000) {
+        markOffline(e.message);
+      } else {
+        $("espStatus").textContent="RECONNECTING";
+      }
+    }
+  } finally {
+    polling=false;
+  }
+}
+
+async function refreshDashboard() {
+  if(polling) {
+    addLog("Refresh already in progress");
+    return;
+  }
+
+  addLog("Manual refresh requested");
+  await pollESP32();
+}
+
+/* ==========================================
+   SYSTEM SELF-TEST
+========================================== */
+
+async function runSelfTest() {
+  const box=$("selfTestResults");
+  box.textContent="Running system checks...";
+
+  const results=[];
+
+  if(mode==="demo") {
+    results.push("Dashboard simulation: ACTIVE");
+    results.push("ESP32 hardware: NOT TESTED IN DEMO MODE");
+  } else {
+    try {
+      const raw=await readESP32();
+      normalizeData(raw);
+
+      results.push("ESP32 communication: PASS");
+
+      for(const [name,key] of [
+        ["INA219","ina219_ok"],
+        ["DS18B20","ds18b20_ok"],
+        ["VEML7700","veml7700_ok"]
+      ]) {
+        const result=
+          raw[key]===true?"PASS":
+          raw[key]===false?"FAIL":
+          "NOT REPORTED";
+
+        results.push(name+": "+result);
+      }
+    } catch(e) {
+      results.push("ESP32 communication: FAIL");
+      results.push("Reason: "+e.message);
+      results.push("Sensor hardware: NOT VERIFIED");
+    }
+  }
+
+  results.push(
+    "n8n webhook: "+
+    (settings.n8nURL
+      ?"CONFIGURED — CHECK EXECUTIONS"
+      :"NOT CONFIGURED")
+  );
+
+  results.push("Notification delivery: NOT VERIFIED");
+
+  box.replaceChildren();
+
+  results.forEach(message=>{
+    const div=document.createElement("div");
+    div.textContent=message;
+    box.appendChild(div);
+  });
+
+  addLog("System self-test completed");
+}
+
+/* ==========================================
+   DOWNLOAD DAILY REPORT
+========================================== */
+
+function downloadFile(filename,content,type) {
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function downloadReport() {
+  checkNewDay();
+
+  const report=[
+    "SMART SOLAR ENERGY MONITORING SYSTEM",
+    "Daily Monitoring Report",
+    "Date: "+daily.date,
+    "Data source: Live ESP32 readings",
+    "",
+    "Total Energy: "+fmt(daily.energy,3)+" Wh",
+    "Peak Power: "+
+      (daily.samples?fmt(daily.peak,2):"--")+" W",
+    "Maximum Temperature: "+
+      fmt(daily.maxTemp,1)+" °C",
+    "Warning Events: "+daily.warnings,
+    "Danger Events: "+daily.dangers,
+    "Recorded Samples: "+daily.samples,
+    "",
+    "Energy is estimated from received measurements.",
+    "Unmonitored periods are not included."
+  ].join("\n");
+
+  downloadFile(
+    "solar-report-"+daily.date+".txt",
+    report,
+    "text/plain"
+  );
+}
+
+function downloadCSV() {
+  checkNewDay();
+
+  const header=[
+    "Timestamp",
+    "Voltage_V",
+    "Current_mA",
+    "Power_mW",
+    "Temperature_C",
+    "Light_lux",
+    "Battery_V"
+  ];
+
+  const escapeCSV=value=>
+    '"'+String(value??"").replace(/"/g,'""')+'"';
+
+  const rows=[header,...csvRows];
+
+  const content=rows.map(row=>
+    row.map(escapeCSV).join(",")
+  ).join("\r\n");
+
+  downloadFile(
+    "solar-data-"+daily.date+".csv",
+    content,
+    "text/csv"
+  );
+}
+
+/* ==========================================
+   STARTUP
+========================================== */
+
+function initialize() {
+  if(load("solarTheme","light")==="dark") {
+    document.body.classList.add("dark");
+  }
+
+  displaySettings();
+  renderLogs();
+
+  checkNewDay();
+  updateDailyDisplay();
+
+  clockUpdate();
+
+  setInterval(clockUpdate,1000);
+  setInterval(checkNewDay,30000);
+  setInterval(processAlertQueue,3000);
+  setInterval(pollESP32,POLL_INTERVAL_MS);
+
+  pollESP32();
+
+  addLog("Solar dashboard started");
+}
+
+initialize();
+
+</script>
+</body>
+</html>
